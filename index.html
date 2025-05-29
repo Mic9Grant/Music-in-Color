@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michael 9 Grant Chromatic Chord Canvas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #00DFFF; /* Electric blue/cyan */
+    --secondary-color: #FFD700; /* Gold for accents */
+    --dark-bg: #121212;
+    --medium-bg: #1c1c1c;
+    --light-bg: #222;
+    --light-text: #ffffff;
+    --medium-text: #e0e0e0;
+    --dark-text: #cccccc;
+    --border-color: #333;
+    --button-primary-bg: #007bff;
+    --button-primary-hover: #0056b3;
+  }
+
+  body {
+    font-family: 'Audiowide', Arial, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--light-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px 15px;
+    box-sizing: border-box;
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .logo {
+    max-width: 100px; /* Adjusted size */
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--primary-color);
+  }
+
+  .title {
+    font-family: 'Audiowide', cursive;
+    font-size: 2em;
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 4px var(--primary-color), 0 0 8px var(--primary-color), 0 0 12px #0077FF, 1px 1px 1px rgba(0,0,0,0.4);
+  }
+
+  .controls-container {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: var(--light-bg);
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column; /* Stack label and select vertically */
+    align-items: flex-start; /* Align label to the start */
+    gap: 8px;
+    flex-grow: 1; /* Allow groups to grow */
+  }
+   .control-group label {
+    font-size: 0.9em;
+    color: var(--dark-text);
+    margin-left: 5px;
+  }
+
+
+  .controls-container select,
+  .controls-container button {
+    padding: 10px;
+    font-size: 1em;
+    font-family: 'Audiowide', sans-serif;
+    border-radius: 4px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: var(--light-text);
+    text-align: center;
+    width: 100%; /* Make selects and button take full width of their group */
+    box-sizing: border-box;
+  }
+  .controls-container select {
+    min-width: 200px; /* Ensure select has a decent width */
+  }
+  .controls-container button {
+    background-color: var(--button-primary-bg);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-transform: uppercase;
+  }
+  .controls-container button:hover {
+    background-color: var(--button-primary-hover);
+  }
+
+
+  .visualization-container {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: var(--medium-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+
+  .blended-color-display {
+    width: 100%;
+    height: 150px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #444; /* Default placeholder */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    color: var(--light-text);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    border: 2px solid var(--border-color);
+    transition: background-color 0.3s ease;
+  }
+
+  .individual-notes-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .note-color-block {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--light-text); /* Ensure text is visible on dark colors */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .note-name { font-size: 1.1em; }
+  .note-hex { font-size: 0.7em; margin-top: 3px; }
+
+
+  .chord-spelling-display {
+    margin-top: 15px;
+    padding: 15px;
+    background-color: var(--light-bg);
+    border-radius: 5px;
+    color: var(--medium-text);
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 1.6;
+  }
+  .chord-spelling-display strong {
+      color: var(--secondary-color);
+  }
+
+  .page-footer {
+    margin-top: 40px;
+    padding: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    color: #777;
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .title { font-size: 1.8em; }
+    .logo { max-width: 80px; }
+    .controls-container { flex-direction: column; gap: 20px; }
+    .control-group { width: 100%; max-width: 350px; } /* Limit width on stacked controls */
+    .blended-color-display { height: 120px; font-size: 1.1em; }
+    .note-color-block { width: 60px; height: 60px; }
+    .section-title { font-size: 1.3em; }
+    .chord-spelling-display { font-size: 1em; }
+    .page-footer { font-size: 0.8em; }
+  }
+  @media (max-width: 480px) {
+    .title { font-size: 1.5em; }
+    .logo { max-width: 70px; }
+    .controls-container select, .controls-container button { font-size: 0.9em; padding: 8px; }
+    .blended-color-display { height: 100px; font-size: 1em; }
+    .note-color-block { width: 50px; height: 50px; }
+    .note-name { font-size: 1em; }
+    .note-hex { font-size: 0.6em; }
+    .section-title { font-size: 1.2em; }
+    .chord-spelling-display { font-size: 0.9em; }
+    .page-footer { font-size: 0.75em; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="logo-container">
+  <img src="app mdg logo 2025.png" alt="Michael 9 Grant Logo" class="logo" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+</div>
+<div class="title">Michael 9 Grant Chromatic Chord Canvas</div>
+
+<div class="controls-container">
+  <div class="control-group">
+    <label for="rootNoteSelector">Root Note:</label>
+    <select id="rootNoteSelector">
+      <option value="C">C</option><option value="C#">C#</option><option value="D">D</option><option value="D#">D#</option><option value="E">E</option><option value="F">F</option><option value="F#">F#</option><option value="G">G</option><option value="G#">G#</option><option value="A">A</option><option value="A#">A#</option><option value="B">B</option>
+    </select>
+  </div>
+  <div class="control-group">
+    <label for="chordTypeSelector">Chord Type:</label>
+    <select id="chordTypeSelector">
+      <option value="">Select Chord Type</option>
+      </select>
+  </div>
+  <div class="control-group" style="flex-grow: 0.5;"> <label>&nbsp;</label> <button id="displayChordButton">Display Chord Colors</button>
+  </div>
+</div>
+
+<div class="visualization-container">
+  <div class="section-title">Blended Chord Color</div>
+  <div id="blendedColorDisplay" class="blended-color-display">
+    Select a chord to see its color.
+  </div>
+
+  <div class="section-title">Individual Note Colors</div>
+  <div id="individualNotesDisplay" class="individual-notes-display">
+    </div>
+
+  <div class="section-title">Chord Spelling</div>
+  <div id="chordSpellingDisplay" class="chord-spelling-display">
+    <p>Notes of the chord will be shown here.</p>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>&copy; Michael 9 Grant 2025</p>
+</footer>
+
+<script>
+  const chromaticNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+  const noteColorMapping = {
+    'C':  '#FF4136', 'C#': '#FF851B', 'D':  '#FFDC00', 'D#': '#A0DC00',
+    'E':  '#2ECC40', 'F':  '#0074D9', 'F#': '#39CCCC', 'G':  '#7FDBFF',
+    'G#': '#B10DC9', 'A':  '#F012BE', 'A#': '#FF69B4', 'B':  '#85144B'
+  };
+
+  const chordFormulas = {
+    'major_triad':[0,4,7],'minor_triad':[0,3,7],'diminished_triad':[0,3,6],'augmented_triad':[0,4,8],'sus2_triad':[0,2,7],'sus4_triad':[0,5,7],'maj7':[0,4,7,11],'m7':[0,3,7,10],'dom7':[0,4,7,10],'dim7':[0,3,6,9],'m7b5':[0,3,6,10],'mMaj7':[0,3,7,11],'aug7':[0,4,8,10],'augMaj7':[0,4,8,11],'add9':[0,4,7,14],'maj9':[0,4,7,11,14],'m9':[0,3,7,10,14],'dom9':[0,4,7,10,14],'maj11':[0,4,7,11,14,17],'m11':[0,3,7,10,14,17],'dom11':[0,4,7,10,14,17],'maj13':[0,4,7,11,14,17,21],'m13':[0,3,7,10,14,17,21],'dom13':[0,4,7,10,14,17,21],'dom7b5':[0,4,6,10],'dom7s5':[0,4,8,10],'dom7b9':[0,4,7,10,13],'dom7s9':[0,4,7,10,15],'dom7b5b9':[0,4,6,10,13],'dom7b5s9':[0,4,6,10,15],'dom7s5b9':[0,4,8,10,13],'dom7s5s9':[0,4,8,10,15],'dom7alt':[0,4,10,13,8],'sus2add4_orig':[0,2,5,7],'add11_orig':[0,4,7,17],'add_b9_orig':[0,4,7,13],'add_s11_orig':[0,4,7,18],'maj7sus2_orig':[0,2,7,11],'maj7sus4_orig':[0,5,7,11],'dom7sus2_orig':[0,2,7,10],'dom7sus4_orig':[0,5,7,10],'maj6':[0,4,7,9],'m6':[0,3,7,9],'maj69':[0,4,7,9,14],'m69':[0,3,7,9,14],'power_chord':[0,7],'major_2nd_dyad':[0,2],'flat_5_dyad':[0,6],'sharp_11_triad':[0,4,7,18],'polychord_placeholder_orig':[0,4,7],
+    'dom7susb9': [0,5,7,10,13], 'dom7suss9': [0,5,7,10,15], 'dom7susb13': [0,5,7,10,20], 'maj7b5': [0,4,6,11], 'maj7s5': [0,4,8,11], 'maj7b9': [0,4,7,11,13], 'maj7s9': [0,4,7,11,15], 'maj7s11': [0,4,7,11,18], 'maj7b13': [0,4,7,11,20], 'm7b9': [0,3,7,10,13], 'm7s9': [0,3,7,10,15], 'm7b11': [0,3,7,10,16], 'm7s11': [0,3,7,10,18], 'm7b13': [0,3,7,10,20], 'm7s13': [0,3,7,10,21],
+    'dom9sus2': [0,2,7,10,14], 'dom9sus4': [0,5,7,10,14], 'maj9b5': [0,4,6,11,14], 'maj9s5': [0,4,8,11,14], 'maj9s11': [0,4,7,11,14,18], 'maj9b13': [0,4,7,11,14,20], 'm9b5': [0,3,6,10,14], 'm9s5': [0,3,8,10,14], 'm9s11': [0,3,7,10,14,18], 'm9b13': [0,3,7,10,14,20], 'dom9b5b13': [0,4,6,10,14,20], 'dom9s5b13': [0,4,8,10,14,20], 'dom9b5s11': [0,4,6,10,14,18], 'dom9s5s11': [0,4,8,10,14,18], 'dim9': [0,3,6,9,14],
+    'dom11sus2': [0,2,7,10,14,17], 'dom11sus4': [0,5,7,10,14,17], 'maj11b5': [0,4,6,11,14,17], 'maj11s5': [0,4,8,11,14,17], 'maj11b9': [0,4,7,11,13,17], 'maj11s9': [0,4,7,11,15,17], 'maj11b13': [0,4,7,11,14,17,20], 'm11b5': [0,3,6,10,14,17], 'm11s5': [0,3,8,10,14,17], 'm11b9': [0,3,7,10,13,17], 'm11s9': [0,3,7,10,15,17], 'm11b13': [0,3,7,10,14,17,20], 'dom11b5b9': [0,4,6,10,13,17], 'dom11s5b9': [0,4,8,10,13,17], 'dom11b5s9': [0,4,6,10,15,17],
+    'dom13sus2': [0,2,7,10,14,17,21], 'dom13sus4': [0,5,7,10,14,17,21], 'maj13b5': [0,4,6,11,14,17,21], 'maj13s5': [0,4,8,11,14,17,21], 'maj13b9': [0,4,7,11,13,17,21], 'maj13s9': [0,4,7,11,15,17,21], 'maj13s11': [0,4,7,11,14,18,21], 'm13b5': [0,3,6,10,14,17,21], 'm13s5': [0,3,8,10,14,17,21], 'm13b9': [0,3,7,10,13,17,21], 'm13s9': [0,3,7,10,15,17,21], 'm13s11': [0,3,7,10,14,18,21], 'dom13b5b9': [0,4,6,10,13,17,21], 'dom13s5b9': [0,4,8,10,13,17,21], 'dom13b5s9': [0,4,6,10,15,17,21],
+    'dom7b5b9b13': [0,4,6,10,13,20], 'dom7s5b9b13': [0,4,8,10,13,20], 'dom7b5s9b13': [0,4,6,10,15,20], 'dom7s5s9b13': [0,4,8,10,15,20], 'dom7b5b9s11': [0,4,6,10,13,18], 'dom7s5b9s11': [0,4,8,10,13,18], 'dom7b5s9s11': [0,4,6,10,15,18], 'dom7s5s9s11': [0,4,8,10,15,18], 'dom7altb13': [0,4,10,13,20], 'dom7alts11': [0,4,10,13,18], 'maj7b5b9': [0,4,6,11,13], 'maj7s5b9': [0,4,8,11,13], 'maj7b5s9': [0,4,6,11,15], 'maj7s5s9': [0,4,8,11,15], 'maj7b5s11': [0,4,6,11,18],
+    'addb2': [0,4,7,1], 'adds2': [0,4,7,3], 'addb3': [0,4,7,2], 'adds4': [0,4,7,6], 'addb6': [0,4,7,8], 'adds6': [0,4,7,10], 'addb7': [0,4,7,9], 'adds8': [0,4,7,1], 'addb10': [0,4,7,3], 'adds10': [0,4,7,5], 'addb13': [0,4,7,8], 'maddb9': [0,3,7,13], 'madds9': [0,3,7,15], 'maddb11': [0,3,7,16], 'madds11': [0,3,7,18],
+    'quartal_cfbb': [0,5,10], 'quintal_stack': [0,7,14], 'quartal_triad': [0,5,10], 'quintal_triad': [0,7,14], 'mixed_quartal_quintal': [0,5,14], 'sus2b5': [0,2,6], 'sus2s5': [0,2,8], 'sus4b5': [0,5,6], 'sus4s5': [0,5,8], 'sus2sus4': [0,2,5,7],
+    'poly_c_d':[0,4,7],'poly_c_e':[0,4,7],'poly_c_fs':[0,4,7],'poly_c_gs':[0,4,7],'poly_c_a':[0,4,7],'poly_c_b':[0,4,7],'poly_dm_c':[0,3,7],'poly_em_c':[0,3,7],'poly_f_c':[0,4,7],'poly_g_c':[0,4,7],'poly_am_c':[0,3,7],'poly_bm_c':[0,3,6],'poly_c7_e':[0,4,7,10],'poly_c7_g':[0,4,7,10],'poly_cmaj7_e':[0,4,7,11],
+    'slash_c_e':[0,4,7],'slash_c_g':[0,4,7],'slash_cm_eb':[0,3,7],'slash_cm_g':[0,3,7],'slash_c7_e_inv':[0,4,7,10],'slash_c7_g_inv':[0,4,7,10],'slash_c7_bb':[0,4,7,10],'slash_cmaj7_e_inv':[0,4,7,11],'slash_cmaj7_g':[0,4,7,11],'slash_cmaj7_b':[0,4,7,11],'slash_cm7_eb':[0,3,7,10],'slash_cm7_g':[0,3,7,10],'slash_cm7_bb':[0,3,7,10],'slash_cdim_eb':[0,3,6],'slash_caug_e':[0,4,8],
+    'cluster_tone':[0,1,2],'cluster_semitone':[0,1],'cluster_maj2':[0,2],'cluster_min2':[0,1],'cluster_mixed_interval':[0,2,5],'cluster_chromatic':[0,1,2,3],'cluster_diatonic':[0,2,4],'cluster_pentatonic':[0,2,5],'cluster_wide':[0,7,11],'cluster_narrow':[0,1,2],
+    'maj7addb9':[0,4,7,11,13],'maj7adds9':[0,4,7,11,15],'maj7addb11':[0,4,7,11,16],'maj7adds11':[0,4,7,11,18],'maj7addb13':[0,4,7,11,20],'m7addb9':[0,3,7,10,13],'m7adds9':[0,3,7,10,15],'m7addb11':[0,3,7,10,16],'m7adds11':[0,3,7,10,18],'m7addb13':[0,3,7,10,20],'dom7addb9':[0,4,7,10,13],'dom7adds9':[0,4,7,10,15],'dom7addb11':[0,4,7,10,16],'dom7adds11':[0,4,7,10,18],'dom7addb13':[0,4,7,10,20],
+    'maj7sus2':[0,2,7,11],'maj7sus4':[0,5,7,11],'maj9sus2':[0,2,7,11,14],'maj9sus4':[0,5,7,11,14],'maj11sus2':[0,2,7,11,14,17],'maj13sus2':[0,2,7,11,14,17,21],'maj13sus4':[0,5,7,11,14,17,21],'m7sus2':[0,2,7,10],'m7sus4':[0,5,7,10],'m9sus2':[0,2,7,10,14],'m9sus4':[0,5,7,10,14],'m11sus2':[0,2,7,10,14,17],'m13sus2':[0,2,7,10,14,17,21],'m13sus4':[0,5,7,10,14,17,21],'dom7sus2b5':[0,2,6,10],
+    'micro_qsharp3':[0,4,7],'micro_qflat3':[0,3,7],'micro_qsharp5':[0,4,7],'micro_qflat5':[0,4,7],'micro_qsharp7':[0,4,7,11],'micro_qflat7':[0,4,7,10],'micro_31tet':[0,4,7],'micro_53tet':[0,4,7],'micro_ji_maj':[0,4,7],'micro_ji_min':[0,3,7],
+    'synth_whole_tone':[0,2,4],'synth_octatonic':[0,2,3,5],'synth_chromatic':[0,1,2,3],'synth_prometheus':[0,2,4],'synth_mystic':[0,6,10,4,9,2],'synth_petrushka':[0,1,4],'synth_elektra':[0,3,4,7],'synth_tristan':[0,4,6,10],'synth_french6':[0,4,6,10],'synth_italian6':[0,4,10],
+    'stacked_3rds':[0,4,7],'stacked_4ths':[0,5,10],'stacked_5ths':[0,7,14],'stacked_6ths':[0,9,18],'stacked_7ths':[0,11,22],'stacked_mixed':[0,4,9],'stacked_asc3':[0,4,7],'stacked_desc3':[0,8,4],'stacked_alt_int':[0,5,9],'stacked_fibonacci':[0,1,2,3,5],
+    'jazz_tritone_sub':[0,4,7,10],'jazz_bII7':[0,4,7,10],'jazz_bVI7':[0,4,7,10],'jazz_sIV7':[0,4,7,10],'jazz_bIII7':[0,4,7,10],'jazz_sI7':[0,4,7,10],'jazz_bVII7':[0,4,7,10],'jazz_sV7':[0,4,7,10],'jazz_chrom_mediant':[0,4,7],'jazz_borrowed_ii':[0,3,6,10],
+    'contemp_bitonal':[0,4,7],'contemp_polyrhythmic':[0],'contemp_spectral':[0,4,7],'contemp_harmonic_series':[0,4,7],'contemp_inharmonic':[0],'contemp_noise':[0],'contemp_prepared':[0,4,7],'contemp_ext_technique':[0,4,7],'contemp_electronic':[0,4,7],'contemp_synthesized':[0,4,7],
+    'region_flamenco':[0,1,4,5],'region_fado':[0,3,7],'region_celtic':[0,2,5,7],'region_middle_eastern':[0,1,4,5,8],'region_indian_raga':[0,4,7],'region_gamelan':[0,2,3,5,7],'region_african':[0,2,4,7,9],'region_latin':[0,4,7,10],'region_balkan':[0,2,3,6,7],'region_nordic':[0,3,5,7,10],
+    'exp_aleatoric':[0],'exp_graphic':[0],'exp_conceptual':[0],'exp_impossible':[0],'exp_virtual':[0],'exp_holographic':[0],'exp_fractal':[0],'exp_algorithmic':[0],'exp_ai_generated':[0],'exp_quantum':[0],
+    'spec_6addb9':[0,4,7,9,13],'spec_6adds9':[0,4,7,9,15],'spec_6adds11':[0,4,7,9,18],'spec_maj69b5':[0,4,6,9,14],'spec_maj69s5':[0,4,8,9,14],'spec_m6addb9':[0,3,7,9,13],'spec_m6adds9':[0,3,7,9,15],'spec_power_addb9':[0,7,13],'spec_open_string':[0],'spec_sympathetic_res':[0],
+    'placeholder_major': [0,4,7], 'placeholder_root': [0]
+  };
+
+  // This array is needed for the getDisplayName function.
+  // It should ideally contain mappings for all chord keys if custom display names are desired.
+  // For simplicity, we'll use a subset here, and getDisplayName will format keys otherwise.
+  const commonChordTypesForGenerator = [
+    { name: "Major", key: "major_triad" }, { name: "Minor", key: "minor_triad" },
+    { name: "Diminished", key: "diminished_triad" }, { name: "Augmented", key: "augmented_triad" },
+    { name: "Sus2", key: "sus2_triad" }, { name: "Sus4", key: "sus4_triad" },
+    { name: "Major 7th", key: "maj7" }, { name: "Minor 7th", key: "m7" },
+    { name: "Dominant 7th", key: "dom7" }, { name: "Diminished 7th", key: "dim7" },
+    { name: "m7♭5", key: "m7b5" }, { name: "Minor/Major 7th", key: "mMaj7" },
+    { name: "Augmented 7th", key: "aug7" }, { name: "Augmented Major 7th", key: "augMaj7" },
+    { name: "Add9", key: "add9" }, { name: "Major 9th", key: "maj9" },
+    { name: "Minor 9th", key: "m9" }, { name: "Dominant 9th", key: "dom9" },
+    { name: "Major 11th", key: "maj11" }, { name: "Minor 11th", key: "m11" },
+    { name: "Dominant 11th", key: "dom11" }, { name: "Major 13th", key: "maj13" },
+    { name: "Minor 13th", key: "m13" }, { name: "Dominant 13th", key: "dom13" }
+    // Add more mappings here if specific display names are needed for the extended list
+  ];
+
+
+  const chordTypeDropdown = document.getElementById('chordTypeSelector');
+  const rootNoteSelector = document.getElementById('rootNoteSelector');
+  const displayChordButton = document.getElementById('displayChordButton');
+  const blendedColorDiv = document.getElementById('blendedColorDisplay');
+  const individualNotesDiv = document.getElementById('individualNotesDisplay');
+  const chordSpellingP = document.getElementById('chordSpellingDisplay').querySelector('p');
+
+  function populateChordTypeDropdown() {
+    const categories = {
+        "Basic Triads": ["major_triad", "minor_triad", "diminished_triad", "augmented_triad", "sus2_triad", "sus4_triad"],
+        "Seventh Chords": ["maj7", "m7", "dom7", "dim7", "m7b5", "mMaj7", "aug7", "augMaj7"],
+        "Extended Chords (Original)": ["add9", "maj9", "m9", "dom9", "maj11", "m11", "dom11", "maj13", "m13", "dom13"],
+        "Altered Dominant Chords (Original)": ["dom7b5", "dom7s5", "dom7b9", "dom7s9", "dom7b5b9", "dom7b5s9", "dom7s5b9", "dom7s5s9", "dom7alt"],
+        "Sus and Add Chords (Original)": ["sus2add4_orig", "add11_orig", "add_b9_orig", "add_s11_orig", "maj7sus2_orig", "maj7sus4_orig", "dom7sus2_orig", "dom7sus4_orig"],
+        "Sixth Chords (Original)": ["maj6", "m6", "maj69", "m69"],
+        "Power and Other Chords (Original)": ["power_chord", "major_2nd_dyad", "flat_5_dyad", "sharp_11_triad", "polychord_placeholder_orig"],
+        "Advanced Seventh Variations": ["dom7susb9", "dom7suss9", "dom7susb13", "maj7b5", "maj7s5", "maj7b9", "maj7s9", "maj7s11", "maj7b13", "m7b9", "m7s9", "m7b11", "m7s11", "m7b13", "m7s13"],
+        "Ninth Chord Variations": ["dom9sus2", "dom9sus4", "maj9b5", "maj9s5", "maj9s11", "maj9b13", "m9b5", "m9s5", "m9s11", "m9b13", "dom9b5b13", "dom9s5b13", "dom9b5s11", "dom9s5s11", "dim9"],
+        "Eleventh Chord Variations": ["dom11sus2", "dom11sus4", "maj11b5", "maj11s5", "maj11b9", "maj11s9", "maj11b13", "m11b5", "m11s5", "m11b9", "m11s9", "m11b13", "dom11b5b9", "dom11s5b9", "dom11b5s9"],
+        "Thirteenth Chord Variations": ["dom13sus2", "dom13sus4", "maj13b5", "maj13s5", "maj13b9", "maj13s9", "maj13s11", "m13b5", "m13s5", "m13b9", "m13s9", "m13s11", "dom13b5b9", "dom13s5b9", "dom13b5s9"],
+        "Complex Altered Chords": ["dom7b5b9b13", "dom7s5b9b13", "dom7b5s9b13", "dom7s5s9b13", "dom7b5b9s11", "dom7s5b9s11", "dom7b5s9s11", "dom7s5s9s11", "dom7altb13", "dom7alts11", "maj7b5b9", "maj7s5b9", "maj7b5s9", "maj7s5s9", "maj7b5s11"],
+        "Add Chord Variations": ["addb2", "adds2", "addb3", "adds4", "addb6", "adds6", "addb7", "adds8", "addb10", "adds10", "addb13", "maddb9", "madds9", "maddb11", "madds11"],
+        "Quartal and Quintal Chords": ["quartal_cfbb", "quintal_stack", "quartal_triad", "quintal_triad", "mixed_quartal_quintal", "sus2b5", "sus2s5", "sus4b5", "sus4s5", "sus2sus4"],
+        "Polychords": ["poly_c_d", "poly_c_e", "poly_c_fs", "poly_c_gs", "poly_c_a", "poly_c_b", "poly_dm_c", "poly_em_c", "poly_f_c", "poly_g_c", "poly_am_c", "poly_bm_c", "poly_c7_e", "poly_c7_g", "poly_cmaj7_e"],
+        "Slash Chords (Bass Inversions)": ["slash_c_e", "slash_c_g", "slash_cm_eb", "slash_cm_g", "slash_c7_e_inv", "slash_c7_g_inv", "slash_c7_bb", "slash_cmaj7_e_inv", "slash_cmaj7_g", "slash_cmaj7_b", "slash_cm7_eb", "slash_cm7_g", "slash_cm7_bb", "slash_cdim_eb", "slash_caug_e"],
+        "Cluster Chords": ["cluster_tone", "cluster_semitone", "cluster_maj2", "cluster_min2", "cluster_mixed_interval", "cluster_chromatic", "cluster_diatonic", "cluster_pentatonic", "cluster_wide", "cluster_narrow"],
+        "Hybrid and Compound Chords": ["maj7addb9", "maj7adds9", "maj7addb11", "maj7adds11", "maj7addb13", "m7addb9", "m7adds9", "m7addb11", "m7adds11", "m7addb13", "dom7addb9", "dom7adds9", "dom7addb11", "dom7adds11", "dom7addb13"],
+        "Extended Sus Chords": ["maj7sus2", "maj7sus4", "maj9sus2", "maj9sus4", "maj11sus2", "maj13sus2", "maj13sus4", "m7sus2", "m7sus4", "m9sus2", "m9sus4", "m11sus2", "m13sus2", "m13sus4", "dom7sus2b5"],
+        "Microtonal and Quarter-Tone Chords": ["micro_qsharp3", "micro_qflat3", "micro_qsharp5", "micro_qflat5", "micro_qsharp7", "micro_qflat7", "micro_31tet", "micro_53tet", "micro_ji_maj", "micro_ji_min"],
+        "Synthetic Scale Chords": ["synth_whole_tone", "synth_octatonic", "synth_chromatic", "synth_prometheus", "synth_mystic", "synth_petrushka", "synth_elektra", "synth_tristan", "synth_french6", "synth_italian6"],
+        "Stacked Interval Chords": ["stacked_3rds", "stacked_4ths", "stacked_5ths", "stacked_6ths", "stacked_7ths", "stacked_mixed", "stacked_asc3", "stacked_desc3", "stacked_alt_int", "stacked_fibonacci"],
+        "Jazz Reharmonization Chords": ["jazz_tritone_sub", "jazz_bII7", "jazz_bVI7", "jazz_sIV7", "jazz_bIII7", "jazz_sI7", "jazz_bVII7", "jazz_sV7", "jazz_chrom_mediant", "jazz_borrowed_ii"],
+        "Contemporary/Modern Chords": ["contemp_bitonal", "contemp_polyrhythmic", "contemp_spectral", "contemp_harmonic_series", "contemp_inharmonic", "contemp_noise", "contemp_prepared", "contemp_ext_technique", "contemp_electronic", "contemp_synthesized"],
+        "Regional/Cultural Variations": ["region_flamenco", "region_fado", "region_celtic", "region_middle_eastern", "region_indian_raga", "region_gamelan", "region_african", "region_latin", "region_balkan", "region_nordic"],
+        "Experimental and Avant-Garde": ["exp_aleatoric", "exp_graphic", "exp_conceptual", "exp_impossible", "exp_virtual", "exp_holographic", "exp_fractal", "exp_algorithmic", "exp_ai_generated", "exp_quantum"],
+        "Final Specialized Chords": ["spec_6addb9", "spec_6adds9", "spec_6adds11", "spec_maj69b5", "spec_maj69s5", "spec_m6addb9", "spec_m6adds9", "spec_power_addb9", "spec_open_string", "spec_sympathetic_res"]
+    };
+
+    const getDisplayName = (key) => {
+        // First, check our curated list of common types for a friendly name
+        const commonType = commonChordTypesForGenerator.find(type => type.key === key);
+        if (commonType) {
+            return commonType.name;
+        }
+        // Fallback for keys not in commonChordTypesForGenerator (from the extended list)
+        // This formats the key to be more readable.
+        return key.replace(/_/g, ' ')
+                  .replace(/([a-z])([A-Z0-9])/g, '$1 $2') // Add space before caps/numbers following a letter
+                  .replace(/([0-9])([a-zA-Z])/g, '$1 $2') // Add space after numbers before letters
+                  .replace(/\b\w/g, l => l.toUpperCase()) // Capitalize each word
+                  .replace(/Orig/g, '').trim(); // Remove "Orig" suffix if present
+    };
+
+    for (const categoryName in categories) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = categoryName;
+        categories[categoryName].forEach(chordKey => {
+            if (chordFormulas[chordKey]) {
+                const option = document.createElement('option');
+                option.value = chordKey;
+                option.textContent = getDisplayName(chordKey);
+                optgroup.appendChild(option);
+            }
+        });
+        if (optgroup.children.length > 0) {
+            chordTypeDropdown.appendChild(optgroup);
+        }
+    }
+  }
+
+
+  function getChordNotes(rootNote, chordTypeKey) {
+    const rootIndex = chromaticNotes.indexOf(rootNote);
+    if (rootIndex === -1) return [];
+
+    const formula = chordFormulas[chordTypeKey] || chordFormulas['placeholder_root'];
+    return formula.map(interval => chromaticNotes[(rootIndex + interval) % 12]);
+  }
+
+  function hexToRgb(hex) {
+    hex = hex.replace('#', '');
+    const bigint = parseInt(hex, 16);
+    return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+  }
+
+  function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(x => {
+      const hex = Math.round(x).toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    }).join('');
+  }
+
+  function blendColorsAverage(colors) {
+    if (!colors || colors.length === 0) return '#444444';
+    let r = 0, g = 0, b = 0;
+    colors.forEach(colorStr => {
+      const rgb = hexToRgb(colorStr);
+      r += rgb.r; g += rgb.g; b += rgb.b;
+    });
+    return rgbToHex(r / colors.length, g / colors.length, b / colors.length);
+  }
+
+  function displayChord() {
+    const rootNote = rootNoteSelector.value;
+    const chordTypeKey = chordTypeDropdown.value;
+
+    if (!rootNote || !chordTypeKey) {
+      blendedColorDiv.style.backgroundColor = '#444';
+      blendedColorDiv.textContent = 'Select root & chord type.';
+      individualNotesDiv.innerHTML = '';
+      chordSpellingP.innerHTML = 'Notes of the chord will be shown here.';
+      return;
+    }
+
+    const chordNotes = getChordNotes(rootNote, chordTypeKey);
+    const noteColors = chordNotes.map(note => noteColorMapping[note] || '#CCCCCC');
+
+    const blendedHex = blendColorsAverage(noteColors);
+    blendedColorDiv.style.backgroundColor = blendedHex;
+    const selectedOptionText = chordTypeDropdown.options[chordTypeDropdown.selectedIndex].text;
+    blendedColorDiv.textContent = `${rootNote} ${selectedOptionText} (${blendedHex.toUpperCase()})`;
+
+    individualNotesDiv.innerHTML = '';
+    chordNotes.forEach((note, index) => {
+      const block = document.createElement('div');
+      block.className = 'note-color-block';
+      block.style.backgroundColor = noteColors[index];
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'note-name';
+      nameSpan.textContent = note;
+      block.appendChild(nameSpan);
+
+      const hexSpan = document.createElement('span');
+      hexSpan.className = 'note-hex';
+      hexSpan.textContent = noteColors[index].toUpperCase();
+      block.appendChild(hexSpan);
+
+      individualNotesDiv.appendChild(block);
+    });
+
+    chordSpellingP.innerHTML = `<strong>${rootNote} ${selectedOptionText}:</strong> ${chordNotes.join(' - ')}`;
+  }
+
+  displayChordButton.addEventListener('click', displayChord);
+
+  populateChordTypeDropdown();
+  blendedColorDiv.textContent = 'Select root & chord type.';
+  chordSpellingP.innerHTML = 'Notes of the chord will be shown here.';
+
+</script>
+</body>
+</html>
